@@ -61,7 +61,8 @@ class ExaSearch:
         current_directory = os.path.dirname(os.path.abspath(__file__))
         file_path = os.path.join(current_directory, filename)
         
-        with open(file_path, 'w') as file:
+        # Open the file with utf-8 encoding to handle all Unicode characters
+        with open(file_path, 'w', encoding='utf-8') as file:
             for entry in parsed_results:
                 for field, value in entry.items():
                     file.write(f"{field}: {value}\n")
