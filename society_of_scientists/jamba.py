@@ -1,22 +1,10 @@
-
-
-# Define thje Jam ba Model Client Class
-
-# Update config for Jamba
-
-# Register the Model Client
-
-# Initiate a Chat
-
-import requests
+# Import necessary libraries
 from types import SimpleNamespace
 from autogen import AssistantAgent, UserProxyAgent
-
-# Import AI21 SDK and AutoGen
 from ai21 import AI21Client
 from ai21.models.chat import UserMessage
-from types import SimpleNamespace
 
+# Define AI21 Jamba Model Client Class
 class AI21JambaModelClient:
     def __init__(self, config, **kwargs):
         self.api_key = config.get('api_key')
@@ -57,10 +45,8 @@ class AI21JambaModelClient:
 
     def message_retrieval(self, response):
         """Retrieve the assistant's response from the AI21 API response."""
-        # Using attribute access for SimpleNamespace
         choices = response.choices
         return [choice.message.content for choice in choices]
-
 
     def cost(self, response) -> float:
         return response.cost
@@ -74,7 +60,7 @@ class AI21JambaModelClient:
             "cost": response.cost
         }
 
-# Define Configuration
+# Define the configuration
 config_list_custom = [
     {
         "model": "jamba-1.5-large",
@@ -86,8 +72,13 @@ config_list_custom = [
     }
 ]
 
+# Add a system message to make the agent a scientist focused on computational neuroscience
+# Make it focus the agent on giving knowledge rather than task-based solutions
+system_message = "You are a scientist specializing in computational neuroscience. You provide detailed and factual explanations about computational neuroscience, focusing on neural networks, synaptic plasticity, brain simulation models, and computational approaches to understanding the brain. Do not provide coding tasks or step-by-step solutions unless explicitly asked. Your responses should be academic in nature."
+
+
 # Initialize Assistant and Register the AI21JambaModelClient
-assistant = AssistantAgent("assistant", llm_config={"config_list": config_list_custom})
+assistant = AssistantAgent("assistant", system_message=system_message, llm_config={"config_list": config_list_custom})
 assistant.register_model_client(model_client_cls=AI21JambaModelClient)
 
 # Set up the user proxy agent
@@ -95,9 +86,9 @@ user_proxy = UserProxyAgent(
     "user_proxy",
     code_execution_config={
         "work_dir": "coding",
-        "use_docker": False
+        "use_docker": False  # Can set to True if Docker is used for code execution
     }
 )
 
-# Start a conversation
-user_proxy.initiate_chat(assistant, message="Tell me something about computational neurosciece.")
+# Start a conversation with the scientist agent
+user_proxy.initiate_chat(assistant, message="Tell me something about computational neuroscience.")
