@@ -1,66 +1,64 @@
 from exa_py import Exa
 
-# Instantiate the Exa client
-exa = Exa("03af6e3c-7b7f-4d46-b541-6771b8a240e0")
+class ExaSearch:
+    def __init__(self, api_key):
+        """Initialize the ExaSearch class with an API key."""
+        self.exa = Exa(api_key=api_key)
 
-# Basic Search
-results_basic = exa.search("This is an Exa query:")
+    def search_papers(self, query, search_type="neural", num_results=2, category="research paper", start_date="2019-09-01T04:00:01.000Z", autoprompt=True, exclude_domains=None, include_html_tags=True, livecrawl="always", highlights=True):
+        """Search for papers based on the provided parameters."""
+        # Perform search and get results
+        if exclude_domains is None:
+            exclude_domains = ["en.wikipedia.org"]
+        
+        self.result = self.exa.search_and_contents(
+            query,
+            type=search_type,
+            use_autoprompt=autoprompt,
+            num_results=num_results,
+            summary={
+                "query": "Please provide only the Abstract of this paper."
+            },
+            category=category,
+            exclude_domains=exclude_domains,
+            text={
+                "include_html_tags": include_html_tags
+            },
+            livecrawl=livecrawl,
+            highlights=highlights,
+            start_published_date=start_date
+        )
+        return self.result
 
-# Autoprompted Search
-results_autoprompt = exa.search("autopromptable query", use_autoprompt=True)
+    def parse_results(self, fields):
+        """Parse the search results and extract specified fields."""
+        parsed_data = []
+        if hasattr(self.result, 'results'):
+            # Access the 'results' attribute of the SearchResponse object
+            for entry in self.result.results:
+                parsed_entry = {field: getattr(entry, field, None) for field in fields}
+                parsed_data.append(parsed_entry)
+        else:
+            raise ValueError("No 'results' found in the response. Please check the search query or result structure.")
+        
+        return parsed_data
 
-# Search with Date Filters
-results_date_filter = exa.search(
-    "This is an Exa query:",
-    start_published_date="2019-01-01",
-    end_published_date="2019-01-31"
-)
+    def print_parsed_results(self, fields):
+        """Print the parsed results for easy viewing."""
+        parsed_results = self.parse_results(fields)
+        for entry in parsed_results:
+            print(entry)
 
-# Search with Domain Filters
-results_domain_filter = exa.search(
-    "This is an Exa query:",
-    include_domains=["www.cnn.com", "www.nytimes.com"]
-)
-
-# Search and Get Text Contents
-results_text_contents = exa.search_and_contents("This is an Exa query:")
-
-# Search and Get Highlights
-results_highlights = exa.search_and_contents("This is an Exa query:", highlights=True)
-
-# Search and Get Contents with Options
-results_contents_options = exa.search_and_contents(
-    "This is an Exa query:",
-    text={"include_html_tags": True, "max_characters": 1000},
-    highlights={"highlights_per_url": 2, "num_sentences": 1, "query": "This is the highlight query:"}
-)
-
-# Find Similar Documents
-results_similar = exa.find_similar("https://example.com")
-
-# Find Similar Excluding Source Domain
-results_similar_exclude = exa.find_similar("https://example.com", exclude_source_domain=True)
-
-# Find Similar with Contents
-results_similar_with_contents = exa.find_similar_and_contents("https://example.com", text=True, highlights=True)
-
-# Get Text Contents
-results_get_contents = exa.get_contents(["ids"])
-
-# Get Highlights
-results_get_highlights = exa.get_contents(["ids"], highlights=True)
-
-# Get Contents with Options
-results_get_contents_options = exa.get_contents(
-    ["ids"],
-    text={"include_html_tags": True, "max_characters": 1000},
-    highlights={"highlights_per_url": 2, "num_sentences": 1, "query": "This is the highlight query:"}
-)
-
-# Get the Newest Content of the Results
-results_newest_content = exa.search_and_contents(
-    "This is an Exa query:",
-    text=True,
-    livecrawl_timeout=8000,  # default 10000
-    livecrawl="always"
-)
+# Example usage of the class
+if __name__ == "__main__":
+    # Initialize the class with your API key
+    search_tool = ExaSearch(api_key="03af6e3c-7b7f-4d46-b541-6771b8a240e0")
+    
+    # Search for papers
+    search_tool.search_papers("Search researchgate for papers on computational neuroscience.", num_results=2)
+    
+    # Define fields to extract
+    fields_to_extract = ["title", "url", "publishedDate", "author", "summary"]
+    
+    # Print parsed results
+    search_tool.print_parsed_results(fields_to_extract)
