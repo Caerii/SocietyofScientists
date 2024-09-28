@@ -382,7 +382,7 @@ groupchat = autogen.GroupChat(
       allow_repeat_speaker=True,
     speaker_selection_method='round_robin', #change to auto later
 )
-
+ 
 manager = autogen.GroupChatManager(groupchat=groupchat, 
                                    llm_config=config_list_custom[0], 
                                    system_message='you dynamically select a speaker.')
