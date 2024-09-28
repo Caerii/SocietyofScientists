@@ -4,6 +4,7 @@ class ExaSearch:
     def __init__(self, api_key):
         """Initialize the ExaSearch class with an API key."""
         self.exa = Exa(api_key=api_key)
+        self.result = None
 
     def search_papers(self, query, search_type="neural", num_results=2, category="research paper", start_date="2019-09-01T04:00:01.000Z", autoprompt=True, exclude_domains=None, include_html_tags=True, livecrawl="always", highlights=True):
         """Search for papers based on the provided parameters."""
@@ -43,6 +44,10 @@ class ExaSearch:
         
         return parsed_data
 
+    def get_parsed_results(self, fields):
+        """Return parsed results for further usage."""
+        return self.parse_results(fields)
+
     def print_parsed_results(self, fields):
         """Print the parsed results for easy viewing."""
         parsed_results = self.parse_results(fields)
@@ -62,3 +67,19 @@ if __name__ == "__main__":
     
     # Print parsed results
     search_tool.print_parsed_results(fields_to_extract)
+
+    # Get only summaries
+
+    summaries = ["summary"]
+    
+    # Get parsed results for further usage
+    parsed_data = search_tool.get_parsed_results(summaries)
+    
+    # Use the parsed data (for example, print it)
+    print("Parsed data:", parsed_data)
+
+    # Use the parsed data to print each summary
+    print("Summaries:")
+    for entry in parsed_data:
+        summary = entry.get("summary", "No summary available")
+        print(summary)
