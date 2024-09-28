@@ -152,14 +152,12 @@ GRANT WRITERS
 
 planner = AssistantAgent(
    name="planner",
-   system_message = '''Planner. You are a helpful AI assistant. Your task is to suggest a comprehensive plan to solve a given task.
-
+   system_message = '''Planner. You are a helpful AI assistant. Your task is to suggest a comprehensive plan to write a scientific grant application.
 
 Explain the Plan: Begin by providing a clear overview of the plan.
 Break Down the Plan: For each part of the plan, explain the reasoning behind it, and describe the specific actions that need to be taken.
 No Execution: Your role is strictly to suggest the plan. Do not take any actions to execute it.
-No Tool Call: If tool call is required, you must include the name of the tool and the agent who calls it in the plan. However, you are not allowed to call any Tool or function yourself.
-
+No Tool Call: You are not allowed to call any Tool or function yourself. 
 
 ''',
    llm_config=config_list_custom[0],
@@ -185,17 +183,15 @@ scientist = AssistantAgent(
    name="scientist",
    system_message = '''scientist. You must follow the plan from the planner.
   
-You are a sophisticated scientist trained in scientific research and innovation.
+You are a sophisticated scientist trained in scientific research, innovation, and grant writing.
   
-Given the definitions and relationships acquired from a comprehensive knowledge graph, your task is to synthesize a novel research proposal with initial key aspects-hypothesis, outcome, mechanisms, design_principles, unexpected_properties, comparision, and novelty  . Your response should not only demonstrate deep understanding and rational thinking but also explore imaginative and unconventional applications of these concepts.
-  
-Analyze the graph deeply and carefully, then craft a detailed research proposal that investigates a likely groundbreaking aspect that incorporates EACH of the concepts and relationships identified in the knowledge graph by the ontologist.
+Your task is to synthesize a grant proposal for a novel research idea with initial key aspects-hypothesis, objectives, methodology, novelty, ethics, budget, and comparison. Your response should not only demonstrate deep understanding and rational thinking but also explore imaginative and unconventional applications of these concepts.
 
 
 Consider the implications of your proposal and predict the outcome or behavior that might result from this line of investigation. Your creativity in linking these concepts to address unsolved problems or propose new, unexplored areas of study, emergent or unexpected behaviors, will be highly valued.
 
 
-Be as quantitative as possible and include details such as numbers, sequences, or chemical formulas.
+Be as quantitative as possible and include details such as numbers, sequences, or mathematical formulas.
 
 
 Your response should include the following SEVEN keys in great detail:
@@ -204,22 +200,22 @@ Your response should include the following SEVEN keys in great detail:
 "hypothesis" clearly delineates the hypothesis at the basis for the proposed research question. The hypothesis should be well-defined, has novelty, is feasible, has a well-defined purpose and clear components. Your hypothesis should be as detailed as possible.
 
 
-"outcome" describes the expected findings or impact of the research. Be quantitative and include numbers, material properties, sequences, or chemical formula.
+"objectives" describes the expected findings or impact of the research. Be quantitative and include numbers, functions, theories, etc.
 
 
-"mechanisms" provides details about anticipated chemical, biological or physical behaviors. Be as specific as possible, across all scales from molecular to macroscale.
-
-
-"design_principles" should list out detailed design principles, focused on novel concepts, and include a high level of detail. Be creative and give this a lot of thought, and be exhaustive in your response.
-
-
-"unexpected_properties" should predict unexpected properties of the new material or system. Include specific predictions, and explain the rationale behind these clearly using logic and reasoning. Think carefully.
-
-
-"comparison" should provide a detailed comparison with other materials, technologies or scientific concepts. Be detailed and quantitative.
+"methodology" outlines the specific algorithms, techniques, datasets, and evaluation metrics used in the study, providing a detailed explanation of how the research was conducted to ensure transparency, reproducibility, and the soundness of the results achieved.
 
 
 "novelty" should discuss novel aspects of the proposed idea, specifically highlighting how this advances over existing knowledge and technology.
+
+
+"ethics" should discuss the ethical and potential societal implications of the proposed idea or concept(s), if any.
+
+
+"budget" should provide a detailed account of the budget required for project for the grant application. Be comprehensive and provide quantitative estimates.
+
+
+"comparison" should provide a detailed comparison with other approaches, technologies or scientific concepts. Be detailed and quantitative.
 
 
 Ensure your scientific proposal is both innovative and grounded in logical reasoning, capable of advancing our understanding or application of the concepts provided.
@@ -230,12 +226,12 @@ Here is an example structure for your response, in the following order:
 
 {{
  "1- hypothesis": "...",
- "2- outcome": "...",
- "3- mechanisms": "...",
- "4- design_principles": "...",
- "5- unexpected_properties": "...",
- "6- comparison": "...",
- "7- novelty": "...",
+ "2- objectives": "...",
+ "3- methodology": "...",
+ "4- novelty": "...",
+ "5- ethics": "...",
+ "6- budget": "...",
+ "7- comparison ": "..."
 }}
 
 
@@ -243,12 +239,11 @@ Remember, the value of your response lies in scientific discovery, new avenues o
 
 
 Further Instructions:
-Make sure to incorporate EACH of the concepts in the knowledge graph in your response.
 Perform only the tasks assigned to you in the plan; do not undertake tasks assigned to other agents.
 Additionally, do not execute any functions or tools.
 ''',
    llm_config=config_list_custom[0],
-   description='I can craft the research proposal with key aspects based on the definitions and relationships acquired by the ontologist. I am **ONLY** allowed to speak after `Ontologist`',
+   description='I can craft the grant research proposal with key aspects.',
 )
 scientist.register_model_client(model_client_cls=AI21JambaModelClient)
 
@@ -259,7 +254,7 @@ hypothesis_agent = AssistantAgent(
 
 
 Critically assess the original content and improve on it. \
-Add more specifics, quantitive scientific information (such as chemical formulas, numbers, sequences, processing conditions, microstructures, etc.), \
+Add more specifics, quantitive scientific information (such as mathematical formulas, numbers, sequences, scientific theory, functions, etc.), \
 rationale, and step-by-step reasoning. When possible, comment on specific modeling and simulation techniques, experimental methods, or particular analyses.
 
 
@@ -273,18 +268,18 @@ where <hypothesis> is the hypothesis aspect of the research proposal.
 Do not add any introductory phrases. Your response begins with your response, with a heading: ### Expanded ...
 ''',
    llm_config=config_list_custom[0],
-   description='''I can expand the "hypothesis" aspect of the research proposal crafted by the "scientist".''',
+   description='''I can expand the "hypothesis" aspect of the research proposal crafted by any of the scientists.''',
 )
 hypothesis_agent.register_model_client(model_client_cls=AI21JambaModelClient)
 
 
-outcome_agent = AssistantAgent(
-   name="outcome_agent",
-   system_message = '''outcome_agent. Carefully expand on the ```{outcome}``` of the research proposal developed by the scientist.
+objective_agent = AssistantAgent(
+   name="objective_agent",
+   system_message = '''objective_agent. Carefully expand on the ```{objective}``` of the research proposal developed by the scientists.
 
 
 Critically assess the original content and improve on it. \
-Add more specifics, quantitive scientific information (such as chemical formulas, numbers, sequences, processing conditions, microstructures, etc.), \
+Add more specifics, quantitive scientific information (such as mathematical formulas, numbers, sequences, scientific theory, functions, etc.), \
 rationale, and step-by-step reasoning. When possible, comment on specific modeling and simulation techniques, experimental methods, or particular analyses.
 
 
@@ -298,14 +293,39 @@ where <outcome> is the outcome aspect of the research proposal.
 Do not add any introductory phrases. Your response begins with your response, with a heading: ### Expanded ...
 ''',
    llm_config=config_list_custom[0],
-   description='''I can expand the "outcome" aspect of the research proposal crafted by the "scientist".''',
+   description='''I can expand the "objective" aspect of the research proposal crafted by the "scientist".''',
 )
-outcome_agent.register_model_client(model_client_cls=AI21JambaModelClient)
+objective_agent.register_model_client(model_client_cls=AI21JambaModelClient)
 
 
-mechanism_agent = AssistantAgent(
-   name="mechanism_agent",
-   system_message = '''mechanism_agent. Carefully expand on this particular aspect: ```{mechanism}``` of the research proposal.
+methodology_agent = AssistantAgent(
+   name="methodology_agent",
+   system_message = '''methodology_agent. Carefully expand on this particular aspect: ```{methodology}``` of the research proposal.
+
+
+Critically assess the original content and improve on it. \
+Add more specifics, quantitive scientific information (such as chemical formulas, numbers, sequences, processing conditions, etc.), \
+rationale, and step-by-step reasoning. When possible, comment on specific modeling and simulation techniques, experimental methods, or particular analyses.
+
+
+Start by carefully assessing this initial draft from the perspective of a peer-reviewer whose task it is to critically assess and improve the science of the following:
+
+
+<methodology>
+where <methodology> is the mechanism aspect of the research proposal. 
+
+
+Do not add any introductory phrases. Your response begins with your response, with a heading: ### Expanded ...
+''',
+   llm_config=config_list_custom[0],
+   description='''I can expand the "methodology" aspect of the research proposal crafted by the "scientist"''',
+)
+methodology_agent.register_model_client(model_client_cls=AI21JambaModelClient)
+
+
+ethics_agent = AssistantAgent(
+   name="ethics_agent",
+   system_message = '''ethics_agent. Carefully expand on this particular aspect: ```{ethics}``` of the research proposal.
 
 
 Critically assess the original content and improve on it. \
@@ -316,41 +336,16 @@ rationale, and step-by-step reasoning. When possible, comment on specific modeli
 Start by carefully assessing this initial draft from the perspective of a peer-reviewer whose task it is to critically assess and improve the science of the following:
 
 
-<mechanism>
-where <mechanism> is the mechanism aspect of the research proposal. 
+<ethics>
+where <ethics> is the design_principles aspect of the research proposal. 
 
 
 Do not add any introductory phrases. Your response begins with your response, with a heading: ### Expanded ...
 ''',
    llm_config=config_list_custom[0],
-   description='''I can expand the "mechanism" aspect of the research proposal crafted by the "scientist"''',
+   description='''I can expand the "ethics" aspect of the research proposal crafted by the "scientist".''',
 )
-mechanism_agent.register_model_client(model_client_cls=AI21JambaModelClient)
-
-
-design_principles_agent = AssistantAgent(
-   name="design_principles_agent",
-   system_message = '''design_principles_agent. Carefully expand on this particular aspect: ```{design_principles}``` of the research proposal.
-
-
-Critically assess the original content and improve on it. \
-Add more specifics, quantitive scientific information (such as chemical formulas, numbers, sequences, processing conditions, microstructures, etc.), \
-rationale, and step-by-step reasoning. When possible, comment on specific modeling and simulation techniques, experimental methods, or particular analyses.
-
-
-Start by carefully assessing this initial draft from the perspective of a peer-reviewer whose task it is to critically assess and improve the science of the following:
-
-
-<design_principles>
-where <design_principles> is the design_principles aspect of the research proposal. 
-
-
-Do not add any introductory phrases. Your response begins with your response, with a heading: ### Expanded ...
-''',
-   llm_config=config_list_custom[0],
-   description='''I can expand the "design_principle" aspect of the research proposal crafted by the "scientist".''',
-)
-design_principles_agent.register_model_client(model_client_cls=AI21JambaModelClient)
+ethics_agent.register_model_client(model_client_cls=AI21JambaModelClient)
 
 
 comparison_agent = AssistantAgent(
@@ -402,6 +397,30 @@ Do not add any introductory phrases. Your response begins with your response, wi
 )
 novelty_agent.register_model_client(model_client_cls=AI21JambaModelClient)
 
+budget_agent = AssistantAgent(
+   name="budget_agent",
+   system_message = '''budget_agent. Carefully expand on this particular aspect: ```{budget}``` of the research proposal.
+
+
+Critically assess the original content and improve on it. \
+Add more specifics, quantitive scientific information (such as chemical formulas, numbers, sequences, processing conditions, microstructures, etc.), \
+rationale, and step-by-step reasoning. When possible, comment on specific modeling and simulation techniques, experimental methods, or particular analyses.
+
+
+Start by carefully assessing this initial draft from the perspective of a peer-reviewer whose task it is to critically assess and improve the science of the following:
+
+
+<budget>
+where <budget> is the novelty aspect of the research proposal. 
+
+
+Do not add any introductory phrases. Your response begins with your response, with a heading: ### Expanded ...
+''',
+   llm_config=config_list_custom[0],
+   description='''I can expand the "budget" aspect of the research proposal crafted by the "scientist".''',
+)
+budget_agent.register_model_client(model_client_cls=AI21JambaModelClient)
+
 
 critic_agent = AssistantAgent(
    name="critic_agent",
@@ -442,9 +461,9 @@ INITIATE GROUP CHAT
 """
 
 groupchat = autogen.GroupChat(
-   agents=[planner, scientist_computer_vision_engineer, scientist_ai_language_models, scientist_ai_hardware_engineer, hypothesis_agent, outcome_agent, mechanism_agent, design_principles_agent, comparison_agent, novelty_agent, critic_agent],
+   agents=[planner, scientist_computer_vision_engineer, scientist_ai_language_models, scientist_ai_hardware_engineer, scientist, hypothesis_agent, objective_agent, methodology_agent, novelty_agent, ethics_agent, budget_agent, critic_agent],
      messages=[],
-     max_round=10,
+     max_round=50,
      admin_name='user',
      send_introductions=True,
      allow_repeat_speaker=True,
@@ -455,7 +474,7 @@ manager = autogen.GroupChatManager(groupchat=groupchat,
                                   system_message='moderator. You are a helpful AI assistant. Your task is to moderate an academic discussion between scientists who are experts in distinct different fields and select the next speaker from the group of scientists that would be good to speak based on the discussion.')
 
 
-task = "come up with a novel neural net"
+task = "Propose a novel neural network architecture that draws inspiration from multiple disciplines."
 
 society_of_mind_agent = SocietyOfMindAgent(
    "society_of_mind",
