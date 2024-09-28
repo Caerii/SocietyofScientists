@@ -36,7 +36,6 @@ class ExaSearch:
         """Parse the search results and extract specified fields."""
         parsed_data = []
         if hasattr(self.result, 'results'):
-            # Access the 'results' attribute of the SearchResponse object
             for entry in self.result.results:
                 parsed_entry = {field: getattr(entry, field, None) for field in fields}
                 parsed_data.append(parsed_entry)
@@ -55,14 +54,15 @@ class ExaSearch:
         for entry in parsed_results:
             print(entry)
 
-    def export_results_to_file(self, fields, filename="search_results_1.txt"):
+    def export_results_to_file(self, fields, filename="search_results.txt"):
         """Export the parsed results to a text file."""
         parsed_results = self.parse_results(fields)
         # Get the current directory
         current_directory = os.path.dirname(os.path.abspath(__file__))
         file_path = os.path.join(current_directory, filename)
         
-        with open(file_path, 'w') as file:
+        # Open the file with utf-8 encoding to handle all Unicode characters
+        with open(file_path, 'w', encoding='utf-8') as file:
             for entry in parsed_results:
                 for field, value in entry.items():
                     file.write(f"{field}: {value}\n")
@@ -70,35 +70,36 @@ class ExaSearch:
         
         print(f"Results exported to {file_path}")
 
-# Example usage of the class
 if __name__ == "__main__":
     # Initialize the class with your API key
     search_tool = ExaSearch(api_key="03af6e3c-7b7f-4d46-b541-6771b8a240e0")
     
-    # Search for papers
-    search_tool.search_papers("Search researchgate for papers on computational neuroscience.", num_results=100)
-    
+    # List of queries
+    queries = [
+        "computational neuroscience",
+        "computer vision",
+        "large language models",
+        "hardware for AI"
+    ]
+
+    # List of result counts
+    result_counts = [100]
+
     # Define fields to extract
-    fields_to_extract = ["title", "url", "publishedDate", "author", "summary"]
-    
-    # Print parsed results
-    search_tool.print_parsed_results(fields_to_extract)
+    # fields_to_extract = ["title", "url", "publishedDate", "author", "summary"]
+    fields_to_extract = ["summary"]
 
-    # Get only summaries
-
-    summaries = ["summary"]
-    
-    # Get parsed results for further usage
-    parsed_data = search_tool.get_parsed_results(summaries)
-    
-    # Use the parsed data (for example, print it)
-    print("Parsed data:", parsed_data)
-
-    # Use the parsed data to print each summary
-    print("Summaries:")
-    for entry in parsed_data:
-        summary = entry.get("summary", "No summary available")
-        print(summary)
-
-    # Export files
-    search_tool.export_results_to_file(fields_to_extract, filename="exported_papers_100.txt")
+    # Loop over each query and result count, and export the results to files
+    for query in queries:
+        for count in result_counts:
+            # Search for papers with the specific query and result count
+            search_tool.search_papers(query, num_results=count)
+            
+            # Create a filename that includes the query and the result count
+            query_clean = query.replace(" ", "_")
+            filename = f"exported_{query_clean}_{count}.txt"
+            
+            # Export the results to a text file
+            search_tool.export_results_to_file(fields_to_extract, filename=filename)
+            
+            print(f"Exported {count} results for query '{query}' to {filename}")
