@@ -3,6 +3,8 @@ from types import SimpleNamespace
 from autogen import AssistantAgent, UserProxyAgent
 from ai21 import AI21Client
 from ai21.models.chat import UserMessage
+import panel as pn
+import asyncio
 
 # Define AI21 Jamba Model Client Class
 class AI21JambaModelClient:
@@ -73,9 +75,7 @@ config_list_custom = [
 ]
 
 # Add a system message to make the agent a scientist focused on computational neuroscience
-# Make it focus the agent on giving knowledge rather than task-based solutions
 system_message = "You are a scientist specializing in computational neuroscience. You provide detailed and factual explanations about computational neuroscience, focusing on neural networks, synaptic plasticity, brain simulation models, and computational approaches to understanding the brain. Do not provide coding tasks or step-by-step solutions unless explicitly asked. Your responses should be academic in nature."
-
 
 # Initialize Assistant and Register the AI21JambaModelClient
 assistant = AssistantAgent("assistant", system_message=system_message, llm_config={"config_list": config_list_custom})
@@ -90,5 +90,48 @@ user_proxy = UserProxyAgent(
     }
 )
 
-# Start a conversation with the scientist agent
+# Define frontend using Panel
+pn.extension(design="material")
+
+# Global variable to manage input
+input_future = None
+initiate_chat_task_created = False
+
+# Define callback function for chat input
+async def callback(contents: str, user: str, instance: pn.chat.ChatInterface):
+    global initiate_chat_task_created
+    global input_future
+
+    if not initiate_chat_task_created:
+        asyncio.create_task(delayed_initiate_chat(user_proxy, assistant, contents))
+    else:
+        if input_future and not input_future.done():
+            input_future.set_result(contents)
+        else:
+            print("There is currently no input being awaited.")
+
+# Chat interface initialization
+chat_interface = pn.chat.ChatInterface(callback=callback)
+chat_interface.send("Send a message to the Neuroscience Assistant!", user="System", respond=False)
+
+# Function to print messages
+def print_messages(recipient, messages, sender, config):
+    content = messages[-1]['content']
+    chat_interface.send(content, user=recipient.name, avatar="🧠", respond=False)
+    return False, None  # Ensure the agent communication flow continues
+
+# Register the message handler for the assistant
+user_proxy.register_reply([AssistantAgent, None], reply_func=print_messages, config={"callback": None})
+
+# Async task to delay the initiation of the chat
+async def delayed_initiate_chat(agent, recipient, message):
+    global initiate_chat_task_created
+    initiate_chat_task_created = True
+    await asyncio.sleep(2)
+    await agent.a_initiate_chat(recipient, message=message)
+
+# Serve the chat interface as the Panel app
+chat_interface.servable()
+
+# Start a conversation with the scientist agent (Initial prompt)
 user_proxy.initiate_chat(assistant, message="Tell me something about computational neuroscience.")
