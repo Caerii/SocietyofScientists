@@ -133,5 +133,10 @@ async def delayed_initiate_chat(agent, recipient, message):
 # Serve the chat interface as the Panel app
 chat_interface.servable()
 
-# Start a conversation with the scientist agent (Initial prompt)
-user_proxy.initiate_chat(assistant, message="Tell me something about computational neuroscience.")
+
+if __name__ == '__main__':
+    pn.serve(chat_interface, start=True, show=True)
+
+    # Start a conversation with the scientist agent (Initial prompt)
+    user_proxy.initiate_chat(assistant, message="Tell me something about computational neuroscience.")
+

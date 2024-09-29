@@ -83,7 +83,7 @@ if __name__ == "__main__":
     ]
 
     # List of result counts
-    result_counts = [100]
+    result_counts = [400]
 
     # Define fields to extract
     # fields_to_extract = ["title", "url", "publishedDate", "author", "summary"]
