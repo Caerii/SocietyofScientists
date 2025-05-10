@@ -92,14 +92,13 @@ Figure 5. Visualization of the ontological knowledge graph (left: whole graph, r
 
 Please cite this work as:
 ```
-@article{ghafarollahi2024sciagentsautomatingscientificdiscovery,
-      title={SciAgents: Automating scientific discovery through multi-agent intelligent graph reasoning}, 
-      author={Alireza Ghafarollahi and Markus J. Buehler},
-      year={2024},
-      eprint={2409.05556},
-      archivePrefix={arXiv},
-      primaryClass={cs.AI},
-      url={https://arxiv.org/abs/2409.05556}, 
+@article{ghafarollahi2024sciagents,
+  title={SciAgents: Automating Scientific Discovery Through Bioinspired Multi-Agent Intelligent Graph Reasoning},
+  author={Ghafarollahi, Alireza and Buehler, Markus J},
+  journal={Advanced Materials},
+  pages={2413523},
+  year={2024},
+  publisher={Wiley Online Library}
 }
 
 @article{buehler2024graphreasoning,
