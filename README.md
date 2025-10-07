@@ -28,7 +28,8 @@ This repository contains code for generating novel research ideas in the field o
 
 The notebook files ```SciAgents_ScienceDiscovery_GraphReasoning_non-automated.ipynb``` and ```SciAgents_ScienceDiscovery_GraphReasoning_automated.ipynb``` in the Notebooks directory correspond to the non-automated and automated multi-agent frameworks, respectively, as explained in the accompanying paper.
 
-The automated multi-agent model is implemented in [AutoGen](https://github.com/microsoft/autogen), an open-source ecosystem for agent-based AI modeling. 
+The automated multi-agent model is implemented with [AG2](https://github.com/ag2ai/ag2?tab=readme-ov-file) (Formerly AutoGen), an open-source ecosystem for agent-based AI modeling. 
+This project is also collected in [Build with AG2](https://github.com/ag2ai/build-with-ag2), you can checkout more projects built with AG2.
 
 ### Audio file generation (podcast style, lecture, summary and others)
 
@@ -81,7 +82,7 @@ Figure 3. Overview of the entire process from initial keyword selection to the f
 ![Fig_3](https://github.com/user-attachments/assets/c356a6da-7218-42d0-b0f2-966193436f4c)
 
 
-Figure 4. SciAgents presents a framework for generative materials informatics, showcasing the iterative process of ideation and reasoning driven by input data, questions, and context.} The cycle of ideation and reasoning leads to predictive outcomes, offering insights into new material designs and properties. The visual elements on the edges represent various data modalties such as images, documents, scientific data, DNA sequences, video content, and microscopy, illustrating the diverse sources of information feeding into this process.
+Figure 4. SciAgents presents a framework for generative materials informatics, showcasing the iterative process of ideation and reasoning driven by input data, questions, and context.} The cycle of ideation and reasoning leads to predictive outcomes, offering insights into new material designs and properties. The visual elements on the edges represent various data modalities such as images, documents, scientific data, DNA sequences, video content, and microscopy, illustrating the diverse sources of information feeding into this process.
 
 ![image](https://github.com/user-attachments/assets/c11b7448-2c7b-43ae-89f2-f0e8ecac6849)
 
@@ -91,14 +92,13 @@ Figure 5. Visualization of the ontological knowledge graph (left: whole graph, r
 
 Please cite this work as:
 ```
-@article{ghafarollahi2024sciagentsautomatingscientificdiscovery,
-      title={SciAgents: Automating scientific discovery through multi-agent intelligent graph reasoning}, 
-      author={Alireza Ghafarollahi and Markus J. Buehler},
-      year={2024},
-      eprint={2409.05556},
-      archivePrefix={arXiv},
-      primaryClass={cs.AI},
-      url={https://arxiv.org/abs/2409.05556}, 
+@article{ghafarollahi2024sciagents,
+  title={SciAgents: Automating Scientific Discovery Through Bioinspired Multi-Agent Intelligent Graph Reasoning},
+  author={Ghafarollahi, Alireza and Buehler, Markus J},
+  journal={Advanced Materials},
+  pages={2413523},
+  year={2024},
+  publisher={Wiley Online Library}
 }
 
 @article{buehler2024graphreasoning,
