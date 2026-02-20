@@ -1,83 +1,82 @@
-# Quick Start Guide
+# Quick Start
 
-## Installation
+## Install
 
 ```bash
-pip install societyofscientists
-```
-
-Or from source:
-```bash
-git clone <repo-url>
-cd SocietyofScientists
 pip install -e .
 ```
 
-## Basic Usage
+Or install dependencies directly:
+```bash
+pip install -r requirements.txt
+```
 
-### 1. Simple Multi-Agent System
+## Configure
+
+```bash
+cp .env.example .env
+```
+
+Edit `.env` and add your API keys:
+```
+AI21_API_KEY=your_key_here
+EXA_API_KEY=your_key_here   # optional — cached data works without this
+```
+
+## Run
+
+### Python API
 
 ```python
 from society_of_scientists import create_society_of_mind_system
 
-# Create the system
 agent, user_proxy, manager = create_society_of_mind_system(
     task="Propose a novel neural network architecture"
 )
 
-# Run
 result = user_proxy.initiate_chat(agent, message="Propose a novel neural network architecture")
 ```
 
-### 2. Command Line
+### Command Line
 
 ```bash
 python -m society_of_scientists "Your research task here"
 ```
 
-### 3. Use Cached Research Data
+### Use Cached Research Data
+
+The system includes 398 cached research paper summaries. No API key needed:
 
 ```python
 from society_of_scientists import get_computer_vision_context, ExaSearch
 
-# Get cached summaries (no API calls)
+# Get cached summaries directly
 cv_context = get_computer_vision_context()
 
-# Or use ExaSearch (uses cache by default)
+# Or use ExaSearch (falls back to cache automatically)
 search = ExaSearch()
 results = search.search_papers("computer vision")
 ```
 
-### 4. Track Costs
+### Track Costs
 
 ```python
 from society_of_scientists import get_tracker
 
-# Costs are automatically tracked
 tracker = get_tracker()
 tracker.print_summary()
 ```
 
-## Configuration
-
-1. Copy `.env.example` to `.env`
-2. Add your API keys:
-   ```
-   AI21_API_KEY=your_key_here
-   EXA_API_KEY=your_key_here
-   ```
-
 ## Examples
 
-See `examples/` folder for:
-- `basic_usage.py` - Simple example
-- `multi_agent_system.py` - Full system example
-- `track_costs.py` - Cost tracking example
-- `use_cached_data.py` - Cached data usage
+See the `examples/` folder:
+- `basic_usage.py` — Minimal working example
+- `multi_agent_system.py` — Full system with all agents
+- `track_costs.py` — Cost tracking
+- `use_cached_data.py` — Working with cached research summaries
 
-## Documentation
+## Next Steps
 
-- [Full Documentation](docs/INDEX.md)
-- [API Docs](docs/api/)
-- [Cost Tracking](docs/cost-tracking/)
-- [Usage Guides](docs/usage/)
+- [Configuration](CONFIGURATION.md) — All environment variables and options
+- [Cost Tracking](cost-tracking/COST_TRACKING.md) — Pricing and optimization
+- [Package Structure](development/PACKAGE_STRUCTURE.md) — How the code is organized
