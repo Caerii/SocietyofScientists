@@ -1,87 +1,37 @@
-from types import SimpleNamespace
+"""
+DEPRECATED: This file is kept for backward compatibility.
+
+For new code, use:
+    from society_of_scientists import create_society_of_mind_system
+    
+    agent, user_proxy, manager = create_society_of_mind_system(task="...")
+    result = user_proxy.initiate_chat(agent, message="...")
+
+See examples/multi_agent_system.py for the recommended approach.
+"""
+# from types import SimpleNamespace  # Not currently used
 from autogen import AssistantAgent, UserProxyAgent
-from ai21 import AI21Client
-from ai21.models.chat import UserMessage
-from types import SimpleNamespace
 import autogen
-from autogen import AssistantAgent
 from autogen.agentchat.contrib.society_of_mind_agent import SocietyOfMindAgent
-from markdown import markdown
-from fpdf import FPDF
+# from markdown import markdown  # Uncomment if needed
+# from fpdf import FPDF  # Uncomment if needed
+
+# Use centralized client
+from .clients.jamba_client import AI21JambaModelClient
 
 # Import our agents definitions from here:
-from agent_list import scientist_computer_vision_engineer_prompt, scientist_ai_language_models_prompt, scientist_ai_hardware_engineer_prompt, scientist_prompt, hypothesis_agent_prompt, objective_agent_prompt, methodology_agent_prompt, ethics_agent_prompt, comparison_agent_prompt, novelty_agent_prompt, budget_agent_prompt, critic_agent_prompt
+from .agent_list import scientist_computer_vision_engineer_prompt, scientist_ai_language_models_prompt, scientist_ai_hardware_engineer_prompt, scientist_prompt, hypothesis_agent_prompt, objective_agent_prompt, methodology_agent_prompt, ethics_agent_prompt, comparison_agent_prompt, novelty_agent_prompt, budget_agent_prompt, critic_agent_prompt
 
-# import panel as pn
-# import asyncio
+# Use centralized config and client
+from .config import Settings
+from .agents import get_llm_config
 
-config_list_custom = [
-   {
-       "model": "jamba-1.5-large",
-       "model_client_cls": "AI21JambaModelClient",
-       "api_key": "5AweiGc6E9UDXMCwtYDVhS5y6LarJoLl",
-       "temperature": 0.1,
-       "top_p": 1.0,
-       "max_tokens": 2048
-   }
-]
-
-class AI21JambaModelClient:
-   def __init__(self, config, **kwargs):
-       self.api_key = "5AweiGc6E9UDXMCwtYDVhS5y6LarJoLl"
-       self.client = AI21Client(api_key=self.api_key)
-       self.model = "jamba-1.5-large"
-       self.temperature = config.get('temperature', 0.7)
-       self.top_p = config.get('top_p', 1.0)
-       print(f"AI21JambaModelClient initialized with config: {config}")
-
-   def create(self, params):
-       messages = [
-           UserMessage(
-               content=params["messages"][0]['content']  # Assuming single user message
-           )
-       ]
-      
-       # Calling AI21's Jamba API
-       response = self.client.chat.completions.create(
-           model=self.model,
-           messages=messages,
-           temperature=self.temperature,
-           top_p=self.top_p,
-           max_tokens=params.get("max_tokens", 256),
-       )
-      
-       # Convert the response to the necessary structure
-       choices = response.choices
-       # Wrap the response in SimpleNamespace to make it compatible with AutoGen
-       response_namespace = SimpleNamespace()
-       response_namespace.choices = [
-           SimpleNamespace(message=SimpleNamespace(content=choice.message.content))
-           for choice in choices
-       ]
-       # Add a cost attribute (even if 0, since AutoGen expects it)
-       response_namespace.cost = 0
-      
-       return response_namespace
-
-   def message_retrieval(self, response):
-       """Retrieve the assistant's response from the AI21 API response."""
-       # Using attribute access for SimpleNamespace
-       choices = response.choices
-       return [choice.message.content for choice in choices]
-
-   def cost(self, response) -> float:
-       return response.cost
-
-
-   @staticmethod
-   def get_usage(response):
-       return {
-           "prompt_tokens": 0,
-           "completion_tokens": 0,
-           "total_tokens": 0,
-           "cost": response.cost
-       }
+settings = Settings()
+config_list_custom = [settings.get_jamba_config()]
+config_list_custom[0]["model"] = "jamba-large"  # Use working model name
+# API key is loaded from environment variables via Settings (already in config_list_custom)
+config_list_custom[0]["temperature"] = 0.1
+config_list_custom[0]["max_tokens"] = 2048
 
 # Initialize Assistant and Register the AI21JambaModelClient
 assistant = AssistantAgent("assistant", llm_config={"config_list": config_list_custom})
@@ -124,7 +74,6 @@ scientist_ai_hardware_engineer.register_model_client(model_client_cls=AI21JambaM
 """
 GRANT WRITERS
 """
-
 planner = AssistantAgent(
    name="planner",
    system_message = '''Planner. You are a helpful AI assistant. Your task is to suggest a comprehensive plan to write a scientific grant application.
@@ -139,19 +88,6 @@ No Tool Call: You are not allowed to call any Tool or function yourself.
    description='Who can suggest a step-by-step plan to solve the task by breaking down the task into simpler sub-tasks.',
 )
 planner.register_model_client(model_client_cls=AI21JambaModelClient)
-
-# assistant = AssistantAgent(
-#    name="assistant",
-#    system_message = '''You are a helpful AI assistant.
-  
-# Your role is to call the appropriate tools and functions as suggested in the plan. You act as an intermediary between the planner's suggested plan and the execution of specific tasks using the available tools. You ensure that the correct parameters are passed to each tool and that the results are accurately reported back to the team.
-
-# Return "TERMINATE" in the end when the task is over.
-# ''',
-#    llm_config=config_list_custom[0],
-#    description='''An assistant who calls the tools and functions as needed and returns the results. Tools include "rate_novelty_feasibility" and "generate_path".''',
-# )
-# assistant.register_model_client(model_client_cls=AI21JambaModelClient)
 
 scientist = AssistantAgent(
    name="scientist",
@@ -177,7 +113,6 @@ objective_agent = AssistantAgent(
 )
 objective_agent.register_model_client(model_client_cls=AI21JambaModelClient)
 
-
 methodology_agent = AssistantAgent(
    name="methodology_agent",
    system_message = methodology_agent_prompt,
@@ -194,7 +129,6 @@ ethics_agent = AssistantAgent(
 )
 ethics_agent.register_model_client(model_client_cls=AI21JambaModelClient)
 
-
 comparison_agent = AssistantAgent(
    name="comparison_agent",
    system_message = comparison_agent_prompt,
@@ -202,7 +136,6 @@ comparison_agent = AssistantAgent(
    description='''I can expand the "comparison" aspect of the research proposal crafted by the "scientist".''',
 )
 comparison_agent.register_model_client(model_client_cls=AI21JambaModelClient)
-
 
 novelty_agent = AssistantAgent(
    name="novelty_agent",
@@ -219,7 +152,6 @@ budget_agent = AssistantAgent(
    description='''I can expand the "budget" aspect of the research proposal crafted by the "scientist".''',
 )
 budget_agent.register_model_client(model_client_cls=AI21JambaModelClient)
-
 
 critic_agent = AssistantAgent(
    name="critic_agent",
@@ -280,9 +212,14 @@ for i in range(len(res.chat_history)):
             if res.search("Summary of the Initial Research Hypothesis", f'''{res.chat_history[i]['content']}'''):
                 formatted_text_summary += f'''{res.chat_history[i]['content']}'''
 
-text_markdown = Markdown(formatted_text)
-
-markdown_to_pdf(formatted_text, 'output_research')
+# Note: Markdown and PDF export functionality commented out
+# Uncomment and implement if needed:
+# text_markdown = markdown(formatted_text)
+# from fpdf import FPDF
+# def markdown_to_pdf(text, filename):
+#     # Implement PDF export if needed
+#     pass
+# markdown_to_pdf(formatted_text, 'output_research')
 
 # """
 # USER INTERFACE"""
