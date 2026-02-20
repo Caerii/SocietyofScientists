@@ -1,111 +1,218 @@
-# SciAgents
-## Automating scientific discovery through multi-agent intelligent graph reasoning
-A. Ghafarollahi, M.J. Buehler*
+# Society of Scientists - Science Funding Grant Amplification Tool
 
-Massachusetts Institute of Technology
+A multi-agent AI system that simulates a collaborative research environment where specialized scientist agents work together to generate comprehensive research grant proposals. The system leverages multiple AI agents with distinct expertise areas to synthesize novel research ideas and create detailed grant applications.
 
-*mbuehler@MIT.EDU
+## Overview
 
-## Summary
-A key challenge in artificial intelligence is the creation of systems capable of autonomously advancing scientific understanding by exploring novel domains, identifying complex patterns, and uncovering previously unseen connections in vast scientific data. In this work, we present SciAgents, an approach that leverages three core concepts: (1) the use of large-scale ontological knowledge graphs to organize and interconnect diverse scientific concepts, (2) a suite of large language models (LLMs) and data retrieval tools, and (3) multi-agent systems with in-situ learning capabilities. Applied to biologically inspired materials, SciAgents reveals hidden interdisciplinary relationships that were previously considered unrelated, achieving a scale, precision, and exploratory power that surpasses traditional human-driven research methods. The framework autonomously generates and refines research hypotheses, elucidating underlying mechanisms, design principles, and unexpected material properties. By integrating these capabilities in a modular fashion, the intelligent system yields material discoveries, critique and improve existing hypotheses, retrieve up-to-date data about existing research, and highlights their strengths and limitations. Our case studies demonstrate scalable capabilities to combine generative AI, ontological representations, and multi-agent modeling, harnessing a `swarm of intelligence' similar to biological systems. This provides new avenues for materials discovery and accelerates the development of advanced materials by unlocking Nature’s design principles. 
+Society of Scientists implements a multi-agent framework where different AI agents play specialized roles:
 
-![Fig_1](https://github.com/user-attachments/assets/3cae1052-427a-407c-8c9d-629111a3c070)
+- **Expert Scientists**: Domain specialists in computational neuroscience, computer vision, AI/language models, and AI hardware
+- **Orchestrators**: Planner and assistant agents that coordinate the research proposal process
+- **Grant Writers**: Specialized agents that expand on different aspects of grant proposals (hypothesis, objectives, methodology, ethics, budget, novelty, comparison)
+- **Critic Agent**: Reviews and provides critical feedback on proposals
 
-Figure 1. **Overview of the multi-agent graph-reasoning system developed here**  
-**Panel a**: Overview of graph construction, as reported in [M.J. Buehler et al., 2024](https://iopscience.iop.org/article/10.1088/2632-2153/ad7228/meta). The visual shows the progression from scientific papers as a data source to graph construction, with the image on the right showing a zoomed-in view of the graph.  
-**Panels b and c**: Two distinct approaches are presented. In **b**, a multi-agent system based on a pre-programmed sequence of interactions between agents ensures consistency and reliability. In **c**, a fully automated, flexible multi-agent framework adapts dynamically to the evolving research context. Both systems leverage a sampled path within a global knowledge graph as context to guide the research idea generation process. Each agent plays a specialized role: **Ontologist** defines key concepts and relationships, **Scientist 1** crafts a detailed research proposal, **Scientist 2** expands and refines the proposal, **Critic agent** conducts a thorough review and suggests improvements.  In the second approach, **Planner** develops a detailed plan, and the **Assistant** checks the novelty of the generated research hypotheses.
-This collaborative framework enables the generation of innovative and well-rounded scientific hypotheses that extend beyond conventional human-driven methods.
+The system uses a "Society of Mind" approach where agents collaborate through group chat to synthesize interdisciplinary research proposals.
 
-![silk_energy_results](https://github.com/user-attachments/assets/19c5e9d9-d6d1-4d9b-9a66-8bda742c7579)
+## Features
 
-Figure 2: Results from our multi-agent model, illustrating a novel research hypothesis based on a knowledge
-graph connecting the keywords “silk” and “energy-intensive”, as an example. This visual overview shows that the
-system produces detailed, well-organized documentation of research development with multiple pages and detailed text
-(the example shown here includes 8,100 words).
+- **Multi-Agent Collaboration**: Multiple specialized agents work together using AutoGen's GroupChat framework
+- **AI21 Jamba Integration**: Uses AI21's Jamba-1.5-large model for agent reasoning
+- **Research Paper Search**: Integration with Exa API for finding and retrieving relevant research papers
+- **Comprehensive Grant Writing**: Generates detailed grant proposals with all required sections
+- **Interdisciplinary Synthesis**: Combines insights from multiple scientific domains
 
-### Codes
-This repository contains code for generating novel research ideas in the field of bio-inspired materials.
+## Project Structure
 
-The notebook files ```SciAgents_ScienceDiscovery_GraphReasoning_non-automated.ipynb``` and ```SciAgents_ScienceDiscovery_GraphReasoning_automated.ipynb``` in the Notebooks directory correspond to the non-automated and automated multi-agent frameworks, respectively, as explained in the accompanying paper.
-
-The automated multi-agent model is implemented with [AG2](https://github.com/ag2ai/ag2?tab=readme-ov-file) (Formerly AutoGen), an open-source ecosystem for agent-based AI modeling. 
-This project is also collected in [Build with AG2](https://github.com/ag2ai/build-with-ag2), you can checkout more projects built with AG2.
-
-### Audio file generation (podcast style, lecture, summary and others)
-
-Please see: [lamm-mit/PDF2Audio](https://github.com/lamm-mit/PDF2Audio) or use the version at 🤗 Hugging Face Spaces [lamm-mit/PDF2Audio](https://huggingface.co/spaces/lamm-mit/PDF2Audio).
-
-### Example
-https://github.com/user-attachments/assets/d5a972f8-5308-4e42-b7dc-d68ba84e2140
-
-
-### Requirements
-
-You need to install the GraphReasoning package, as describe below. Further, (a) OpenAI and (b) Semantic Scholar APIs are required to run the codes. 
-
-#### Graph Reasoning installation 
-
-Install directly from GitHub:
 ```
-pip install git+https://github.com/lamm-mit/GraphReasoning
-```
-Or, editable:
-```
-pip install -e git+https://github.com/lamm-mit/GraphReasoning.git#egg=GraphReasoning
-```
-You may need wkhtmltopdf:
-```
-sudo apt-get install wkhtmltopdf
-```
-#### Graph file:
-```
-from huggingface_hub import hf_hub_download   
-graph_name='large_graph_simple_giant.graphml'
-filename = f"{graph_name}"
-file_path = hf_hub_download(repo_id='lamm-mit/bio-graph-1K', filename=filename,  local_dir='./graph_giant_component')
+SocietyofScientists/
+├── society_of_scientists/    # Main package (pip installable)
+│   ├── __init__.py          # Package exports
+│   ├── __main__.py          # CLI entry point
+│   ├── agent_list.py        # Agent prompt definitions
+│   ├── agents/              # Agent creation and management
+│   │   ├── agent_factory.py # Centralized agent creation
+│   │   └── __init__.py
+│   ├── clients/             # API clients
+│   │   ├── jamba_client.py  # AI21 Jamba client with cost tracking
+│   │   └── __init__.py
+│   ├── config/              # Configuration management
+│   │   ├── settings.py      # Centralized settings
+│   │   └── __init__.py
+│   ├── tools/               # Tools and utilities
+│   │   ├── exa_search.py    # Exa API with cache support
+│   │   ├── data_loader.py   # Load cached research summaries
+│   │   ├── agent_context.py # Agent context helpers
+│   │   └── __init__.py
+│   ├── utils/               # Utility functions
+│   │   ├── cost_tracker.py  # Cost tracking and measurement
+│   │   └── __init__.py
+│   └── data/                # Data files (cached summaries)
+├── docs/                    # Documentation
+│   ├── api/                 # API documentation
+│   ├── cost-tracking/       # Cost tracking docs
+│   ├── usage/               # Usage guides
+│   └── development/         # Development docs
+├── examples/                # Usage examples
+├── tests/                   # Test files
+├── README.md               # This file
+├── setup.py                # Package setup
+└── requirements.txt        # Dependencies
 ```
 
-#### Embeddings:
+## Requirements
+
+- Python 3.10+
+- AutoGen (AG2)
+- AI21 SDK (for Jamba models)
+- Exa API (for research paper search)
+- Panel (for UI components, optional)
+
+## Installation
+
+### Install from PyPI (Recommended)
+
+```bash
+pip install societyofscientists
 ```
-from huggingface_hub import hf_hub_download
-embedding_name='embeddings_simple_giant_ge-large-en-v1.5.pkl'
-filename = f"{embedding_name}"
-file_path = hf_hub_download(repo_id='lamm-mit/bio-graph-1K', filename=filename,  local_dir='./graph_giant_component')
+
+### Install from Source
+
+```bash
+# Clone the repository
+git clone https://github.com/yourusername/SocietyofScientists.git
+cd SocietyofScientists
+
+# Install in development mode
+pip install -e .
+
+# Or install directly
+pip install .
 ```
 
-### Additional background
+### Development Installation
 
-![Fig_2](https://github.com/user-attachments/assets/88f6a9f3-77b5-4b9c-ad7a-73e4b0841f0b)
-
-Figure 3. Overview of the entire process from initial keyword selection to the final document, following a hierarchical expansion strategy where answers are successively refined and improved, enriched with retrieved data, critiqued and amended by identification or critical modeling, simulation and experimental tasks. The process begins with initial keyword identification or random exploration within a graph, followed by path sampling to create a subgraph of relevant concepts and relationships. This subgraph forms the basis for generating structured output in JSON, including the hypothesis, outcome, mechanisms, design principles, unexpected properties, comparison, and novelty. Each component is subsequently expanded on with individual prompting, to yield significant amount of additional detail, forming a comprehensive draft. This draft then undergoes a critical review process, including amendments for modeling and simulation priorities (e.g., molecular dynamics) and experimental priorities (e.g., synthetic biology). The final integrated draft, along with critical analyses, results in a document that guides further scientific inquiry.
-
-![Fig_3](https://github.com/user-attachments/assets/c356a6da-7218-42d0-b0f2-966193436f4c)
-
-
-Figure 4. SciAgents presents a framework for generative materials informatics, showcasing the iterative process of ideation and reasoning driven by input data, questions, and context.} The cycle of ideation and reasoning leads to predictive outcomes, offering insights into new material designs and properties. The visual elements on the edges represent various data modalities such as images, documents, scientific data, DNA sequences, video content, and microscopy, illustrating the diverse sources of information feeding into this process.
-
-![image](https://github.com/user-attachments/assets/c11b7448-2c7b-43ae-89f2-f0e8ecac6849)
-
-Figure 5. Visualization of the ontological knowledge graph (left: whole graph, right: sub-graph) that organizes information. 
-
-### Original papers
-
-Please cite this work as:
+```bash
+pip install -e ".[dev]"
 ```
-@article{ghafarollahi2024sciagents,
-  title={SciAgents: Automating Scientific Discovery Through Bioinspired Multi-Agent Intelligent Graph Reasoning},
-  author={Ghafarollahi, Alireza and Buehler, Markus J},
-  journal={Advanced Materials},
-  pages={2413523},
-  year={2024},
-  publisher={Wiley Online Library}
-}
 
-@article{buehler2024graphreasoning,
-	author={Markus J. Buehler},
-	title={Accelerating Scientific Discovery with Generative Knowledge Extraction, Graph-Based Representation, and Multimodal Intelligent Graph Reasoning},
-	journal={Machine Learning: Science and Technology},
-	year={2024},
-	url={http://iopscience.iop.org/article/10.1088/2632-2153/ad7228},
-}
+## Configuration
+
+### API Keys
+
+You'll need to configure API keys for:
+
+1. **AI21 Jamba API**: Set your API key in the configuration files
+2. **Exa API**: Set your Exa API key for research paper search
+
+Update the API keys in:
+- `society_of_scientists/jamba_working.py`
+- `society_of_scientists/exa_agent.py`
+- `society_of_scientists/exa_files.py`
+
+## Quick Start
+
+### Basic Usage
+
+```python
+from society_of_scientists import create_society_of_mind_system
+
+# Create the multi-agent system
+agent, user_proxy, manager = create_society_of_mind_system(
+    task="Propose a novel neural network architecture"
+)
+
+# Run the system
+result = user_proxy.initiate_chat(agent, message="Propose a novel neural network architecture")
 ```
+
+### Command Line Usage
+
+```bash
+python -m society_of_scientists "Your research task here"
+```
+
+### Using Cached Research Data
+
+```python
+from society_of_scientists import get_computer_vision_context, ExaSearch
+
+# Use cached summaries (free, no API calls)
+cv_summaries = get_computer_vision_context()
+
+# Or use Exa search (uses cache by default)
+search = ExaSearch()
+results = search.search_papers("computer vision")  # Uses cached data
+```
+
+### Track Costs
+
+```python
+from society_of_scientists import get_tracker
+
+# Costs are automatically tracked
+tracker = get_tracker()
+tracker.print_summary()  # View usage and costs
+```
+
+See `examples/` folder for more usage examples.
+
+## Agent Roles
+
+### Expert Scientists
+- **Computer Vision Engineer**: Expert in computer vision, image processing, and visual AI
+- **AI/Language Models Scientist**: Expert in large language models, NLP, and AI systems
+- **AI Hardware Engineer**: Expert in AI hardware, chips, and computational infrastructure
+
+### Orchestrators
+- **Planner**: Creates comprehensive plans for grant proposal development
+- **Assistant**: Coordinates tool usage and task execution
+
+### Grant Writers
+- **Scientist**: Synthesizes initial grant proposal with all key aspects
+- **Hypothesis Agent**: Expands and refines the hypothesis section
+- **Objective Agent**: Expands on research objectives and expected outcomes
+- **Methodology Agent**: Details research methods, algorithms, and techniques
+- **Ethics Agent**: Addresses ethical considerations and societal implications
+- **Budget Agent**: Provides detailed budget estimates
+- **Novelty Agent**: Highlights novel aspects and advances over existing work
+- **Comparison Agent**: Compares with other approaches and technologies
+
+### Review
+- **Critic Agent**: Provides comprehensive review, strengths/weaknesses, and improvements
+
+## Example Output
+
+The system generates comprehensive grant proposals including:
+- Detailed hypothesis with scientific reasoning
+- Quantitative objectives with specific metrics
+- Comprehensive methodology with algorithms and datasets
+- Novelty assessment
+- Ethical considerations
+- Detailed budget breakdown
+- Comparison with existing approaches
+- Critical review and suggestions
+
+## Documentation
+
+Comprehensive documentation is available in the `docs/` folder:
+
+- **API Documentation** (`docs/api/`) - API keys, models, testing
+- **Cost Tracking** (`docs/cost-tracking/`) - Pricing, cost optimization
+- **Usage Guides** (`docs/usage/`) - How to use features
+- **Development** (`docs/development/`) - Development notes and plans
+
+See `docs/INSTALLATION.md` for detailed installation instructions, or `docs/QUICK_START.md` for a quick start guide.
+
+## License
+
+See LICENSE.txt for license information.
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## Notes
+
+- This project uses AutoGen (AG2) for multi-agent orchestration
+- The system is designed to simulate collaborative scientific research environments
+- API keys should be kept secure and not committed to version control
