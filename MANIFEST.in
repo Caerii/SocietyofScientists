@@ -1,0 +1,25 @@
+# Include package data
+include README.md
+include LICENSE.txt
+include requirements.txt
+include .env.example
+
+# Include package data files
+recursive-include society_of_scientists/data *.txt
+recursive-include society_of_scientists/data .gitkeep
+
+# Exclude unnecessary files
+global-exclude __pycache__
+global-exclude *.pyc
+global-exclude *.pyo
+global-exclude .DS_Store
+global-exclude .git
+global-exclude .venv
+global-exclude venv
+global-exclude *.log
+
+# Exclude old/legacy files
+prune society_of_scientists/old
+prune docs
+prune examples
+prune tests
