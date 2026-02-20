@@ -80,12 +80,12 @@ Jamba Mini 2 costs roughly $0.0003 per 1K tokens. A typical proposal generation 
 
 ## Documentation
 
-- [Installation](docs/INSTALLATION.md) — PyPI, source, and development installs
-- [Quick Start](docs/QUICK_START.md) — Usage examples
-- [Configuration](docs/CONFIGURATION.md) — Environment variables and API keys
-- [Cost Tracking](docs/cost-tracking/COST_TRACKING.md) — Pricing and optimization
-- [Jamba Models](docs/api/JAMBA_MODELS_AVAILABLE.md) — Available models and capabilities
-- [Package Structure](docs/development/PACKAGE_STRUCTURE.md) — Module layout and public API
+- [System Architecture](docs/architecture/OVERVIEW.md) — components, data flow, design decisions
+- [Agent Reference](docs/architecture/AGENTS.md) — all 12 agents and their roles
+- [Generation Pipeline](docs/architecture/PIPELINE.md) — step-by-step proposal flow
+- [API Reference](docs/api/REFERENCE.md) — all public functions, classes, and REST endpoints
+- [Configuration](docs/CONFIGURATION.md) — environment variables and API keys
+- [Cost Tracking](docs/cost-tracking/COST_TRACKING.md) — pricing and optimization
 
 ## Attribution
 
