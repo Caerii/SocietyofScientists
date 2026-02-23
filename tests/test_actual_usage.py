@@ -12,7 +12,7 @@ print("\n1. Testing Exa search tool (from tools.py)...")
 try:
     from exa_py import Exa
     
-    exa = Exa(api_key="03af6e3c-7b7f-4d46-b541-6771b8a240e0")
+    exa = Exa(api_key=os.getenv("EXA_API_KEY", ""))
     result = exa.search_and_contents(
         "computational neuroscience",
         type="neural",
@@ -40,7 +40,7 @@ try:
     from ai21.models.chat import UserMessage
     from types import SimpleNamespace
     
-    api_key = "5AweiGc6E9UDXMCwtYDVhS5y6LarJoLl"
+    api_key = os.getenv("AI21_API_KEY", "")
     client = AI21Client(api_key=api_key)
     
     # Try the exact pattern from jamba_working.py

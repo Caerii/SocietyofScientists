@@ -65,15 +65,12 @@ The AI21 API endpoint `https://api.ai21.com/studio/v1/models` returned the follo
      - `jamba-mini-2-2026-01` (latest, most cost-effective)
      - `jamba-mini-1.7-2025-07` (older mini version)
 
-3. **Test with Available Model Names**:
+3. **Update Model Name in Configuration**:
    ```python
-   # In jamba_working.py, change:
-   "model": "jamba-1.5-large",  # ❌ Doesn't exist
-   
-   # To:
-   "model": "jamba-large-1.7-2025-07",  # ✅ Available
-   # OR
-   "model": "jamba-mini-2-2026-01",  # ✅ Latest & cheapest
+   # In .env:
+   JAMBA_MODEL=jamba-large-1.7-2025-07    # Most capable
+   # or
+   JAMBA_MODEL=jamba-mini-2-2026-01       # Latest & cheapest
    ```
 
 ## 📊 Model Comparison
@@ -85,10 +82,3 @@ The AI21 API endpoint `https://api.ai21.com/studio/v1/models` returned the follo
 | jamba-mini-1.7-2025-07 | 256K | $0.0000002 | $0.0000004 | Cost-effective, older version |
 
 **Recommendation**: Use `jamba-mini-2-2026-01` - it's the latest version and 10x cheaper than the large model.
-
-## 🔑 Current Key Status
-
-- **API Key**: `5AweiGc6E9UDXMCwtYDVhS5y6LarJoLl`
-- **Status**: Valid (can query API)
-- **Model Access**: Denied (403 errors)
-- **Action Needed**: Enable model access in AI21 account

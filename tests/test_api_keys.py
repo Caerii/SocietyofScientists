@@ -13,7 +13,7 @@ def test_ai21_key():
         from ai21.models.chat import UserMessage
         
         # Test key from jamba_working.py
-        api_key = "5AweiGc6E9UDXMCwtYDVhS5y6LarJoLl"
+        api_key = os.getenv("AI21_API_KEY", "")
         client = AI21Client(api_key=api_key)
         
         # Simple test call using the correct format
@@ -45,7 +45,7 @@ def test_exa_key():
         from exa_py import Exa
         
         # Test key from exa_files.py
-        api_key = "03af6e3c-7b7f-4d46-b541-6771b8a240e0"
+        api_key = os.getenv("EXA_API_KEY", "")
         exa = Exa(api_key=api_key)
         
         # Simple test search

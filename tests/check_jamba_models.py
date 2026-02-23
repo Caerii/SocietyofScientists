@@ -6,7 +6,7 @@ try:
     from ai21 import AI21Client
     from ai21.models.chat import UserMessage
     
-    api_key = "5AweiGc6E9UDXMCwtYDVhS5y6LarJoLl"
+    api_key = os.getenv("AI21_API_KEY", "")
     client = AI21Client(api_key=api_key)
     
     print("=" * 60)

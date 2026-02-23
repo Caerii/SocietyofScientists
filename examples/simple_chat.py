@@ -1,3 +1,4 @@
+import os
 # Import necessary libraries
 from types import SimpleNamespace
 from autogen import AssistantAgent, UserProxyAgent
@@ -67,7 +68,7 @@ config_list_custom = [
     {
         "model": "jamba-1.5-large",
         "model_client_cls": "AI21JambaModelClient",
-        "api_key": "5AweiGc6E9UDXMCwtYDVhS5y6LarJoLl",
+        "api_key": os.getenv("AI21_API_KEY", ""),
         "temperature": 0.7,
         "top_p": 1.0,
         "max_tokens": 256

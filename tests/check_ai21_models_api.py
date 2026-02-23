@@ -1,8 +1,9 @@
+import os
 """Try to get available models from AI21 API directly."""
 import requests
 import json
 
-api_key = "5AweiGc6E9UDXMCwtYDVhS5y6LarJoLl"
+api_key = os.getenv("AI21_API_KEY", "")
 
 print("=" * 60)
 print("Checking AI21 API for Available Models")

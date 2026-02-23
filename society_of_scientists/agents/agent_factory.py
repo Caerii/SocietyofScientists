@@ -274,6 +274,7 @@ def create_society_of_mind_system(
         grant_writers["hypothesis"],
         grant_writers["objective"],
         grant_writers["methodology"],
+        grant_writers["comparison"],
         grant_writers["novelty"],
         grant_writers["ethics"],
         grant_writers["budget"],

@@ -1,9 +1,10 @@
+import os
 """Test both API keys after billing connection."""
 from ai21 import AI21Client
 from ai21.models.chat import UserMessage
 
 keys_to_test = [
-    ("Original Key", "5AweiGc6E9UDXMCwtYDVhS5y6LarJoLl"),
+    ("Original Key", os.getenv("AI21_API_KEY", "")),
     ("New Key", "9f7fbfd0-52aa-460a-9cdb-66b39947a6b3"),
 ]
 
