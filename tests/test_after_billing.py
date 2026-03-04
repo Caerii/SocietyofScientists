@@ -1,11 +1,12 @@
 import os
+
 """Test both API keys after billing connection."""
 from ai21 import AI21Client
 from ai21.models.chat import UserMessage
 
 keys_to_test = [
     ("Original Key", os.getenv("AI21_API_KEY", "")),
-    ("New Key", "9f7fbfd0-52aa-460a-9cdb-66b39947a6b3"),
+    ("New Key", os.getenv("AI21_NEW_API_KEY", "")),
 ]
 
 models_to_test = [
@@ -22,23 +23,22 @@ print("=" * 70)
 working_combinations = []
 
 for key_name, api_key in keys_to_test:
-    print(f"\n{'='*70}")
+    print(f"\n{'=' * 70}")
     print(f"Testing: {key_name}")
-    print(f"{'='*70}")
-    
+    print(f"{'=' * 70}")
+
     client = AI21Client(api_key=api_key)
-    
+
     for model in models_to_test:
         try:
             print(f"\n  Testing {model:30}...", end=" ")
-            messages = [UserMessage(content="Say 'API key works' if you can read this.")]
+            messages = [
+                UserMessage(content="Say 'API key works' if you can read this.")
+            ]
             response = client.chat.completions.create(
-                model=model,
-                messages=messages,
-                max_tokens=50,
-                temperature=0.7
+                model=model, messages=messages, max_tokens=50, temperature=0.7
             )
-            
+
             if response and response.choices:
                 content = response.choices[0].message.content
                 print(f"[OK] WORKS!")
@@ -66,7 +66,7 @@ if working_combinations:
         print(f"     Model: {model}")
         print(f"     Response preview: {response[:60]}...")
         print()
-    
+
     # Recommend the first working one
     best_key, best_model, _ = working_combinations[0]
     print(f"\n🎉 RECOMMENDATION:")

@@ -49,7 +49,7 @@ try:
                 parts = version_str.split('.')
                 _autogen_version = tuple(map(int, parts[:2]))
                 _autogen_major = _autogen_version[0] if _autogen_version else 0
-            except:
+            except Exception:
                 _autogen_version = (0, 2)
                 _autogen_major = 0
 except ImportError:

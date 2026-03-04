@@ -1,11 +1,15 @@
 """Cost tracking and measurement for AI21 API usage."""
-import time
+import logging
+import os
+import json
+import tempfile
+import threading
 from typing import Dict, List, Optional
 from dataclasses import dataclass, field
 from datetime import datetime
-import json
-import os
 from pathlib import Path
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass
@@ -53,19 +57,20 @@ class CostTracker:
     def __init__(self, log_file: Optional[str] = None):
         """
         Initialize cost tracker.
-        
+
         Args:
             log_file: Optional path to JSON log file for persistence
         """
+        self._lock = threading.Lock()
         self.usage_history: List[APIUsage] = []
         self.pricing = ModelPricing()
-        
+
         if log_file is None:
             # Default to data directory
             data_dir = Path(__file__).parent.parent / "data"
             data_dir.mkdir(exist_ok=True)
             log_file = str(data_dir / "api_usage_log.json")
-        
+
         self.log_file = log_file
         self._load_history()
     
@@ -144,10 +149,11 @@ class CostTracker:
             cost=cost,
             operation=operation
         )
-        
-        self.usage_history.append(usage)
-        self._save_history()
-        
+
+        with self._lock:
+            self.usage_history.append(usage)
+            self._save_history()
+
         return usage
     
     def get_total_cost(self, model: Optional[str] = None) -> float:
@@ -210,7 +216,7 @@ class CostTracker:
         }
     
     def _save_history(self):
-        """Save usage history to file."""
+        """Save usage history to file atomically."""
         try:
             data = [
                 {
@@ -224,24 +230,32 @@ class CostTracker:
                 }
                 for u in self.usage_history
             ]
-            
-            with open(self.log_file, 'w') as f:
-                json.dump(data, f, indent=2)
+
+            # Write to temp file then rename for atomicity
+            dir_name = os.path.dirname(self.log_file) or "."
+            fd, tmp_path = tempfile.mkstemp(dir=dir_name, suffix=".json.tmp")
+            try:
+                with os.fdopen(fd, 'w') as f:
+                    json.dump(data, f, indent=2)
+                os.replace(tmp_path, self.log_file)
+            except BaseException:
+                os.unlink(tmp_path)
+                raise
         except Exception as e:
-            print(f"Warning: Could not save usage history: {e}")
-    
+            logger.warning("Could not save usage history: %s", e)
+
     def _load_history(self):
         """Load usage history from file."""
         if os.path.exists(self.log_file):
             try:
                 with open(self.log_file, 'r') as f:
                     data = json.load(f)
-                
+
                 self.usage_history = [
                     APIUsage(**item) for item in data
                 ]
             except Exception as e:
-                print(f"Warning: Could not load usage history: {e}")
+                logger.warning("Could not load usage history: %s", e)
     
     def print_summary(self):
         """Print a summary of usage and costs."""
@@ -281,11 +295,14 @@ class CostTracker:
 
 # Global tracker instance
 _tracker: Optional[CostTracker] = None
+_tracker_lock = threading.Lock()
 
 
 def get_tracker() -> CostTracker:
-    """Get or create global cost tracker instance."""
+    """Get or create global cost tracker instance (thread-safe)."""
     global _tracker
     if _tracker is None:
-        _tracker = CostTracker()
+        with _tracker_lock:
+            if _tracker is None:
+                _tracker = CostTracker()
     return _tracker
