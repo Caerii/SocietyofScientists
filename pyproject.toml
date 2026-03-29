@@ -16,6 +16,9 @@ dependencies = [
     "fpdf",
     "markdown",
     "python-dotenv",
+    "slowapi>=0.1.9",
+    "pydantic>=2.5.0",
+    "cachetools>=5.3.0",
 ]
 
 [project.optional-dependencies]
