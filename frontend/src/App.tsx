@@ -12,14 +12,9 @@ import Settings from './pages/Settings'
 function App() {
   const { toasts, removeToast } = useToastStore()
 
-  return (
+return (
     <ErrorBoundary>
-      <Router
-        future={{
-          v7_startTransition: true,
-          v7_relativeSplatPath: true,
-        }}
-      >
+      <Router>
         <Layout>
           <Routes>
             <Route path="/" element={<Dashboard />} />

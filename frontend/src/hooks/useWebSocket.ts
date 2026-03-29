@@ -5,7 +5,7 @@ type MessageHandler = (data: any) => void
 export function useWebSocket() {
   const [socket, setSocket] = useState<WebSocket | null>(null)
   const [isConnected, setIsConnected] = useState(false)
-  const reconnectTimeoutRef = useRef<NodeJS.Timeout>()
+  const reconnectTimeoutRef = useRef<number>()
   const messageHandlersRef = useRef<Map<string, MessageHandler[]>>(new Map())
   const reconnectAttemptsRef = useRef(0)
   const maxReconnectAttempts = 5
@@ -13,7 +13,7 @@ export function useWebSocket() {
   const connect = useCallback(() => {
     if (socket?.readyState === WebSocket.OPEN) return
 
-    const wsUrl = import.meta.env.VITE_WS_URL || 'ws://localhost:8000/ws'
+    const wsUrl = (import.meta as any).env?.VITE_WS_URL || 'ws://localhost:8000/ws'
     const newSocket = new WebSocket(wsUrl)
 
     newSocket.onopen = () => {

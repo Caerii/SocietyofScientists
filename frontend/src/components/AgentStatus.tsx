@@ -1,4 +1,4 @@
-import { Brain, CheckCircle2, Circle, Loader2 } from 'lucide-react'
+import { Brain, CheckCircle2, Loader2 } from 'lucide-react'
 import Card from './ui/Card'
 import { cn } from '../utils/cn'
 

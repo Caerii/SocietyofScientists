@@ -24,10 +24,10 @@ export default function ConversationHistory() {
 
   useEffect(() => {
     setLoading(true)
-    proposalApi
+proposalApi
       .getHistory()
       .then((res) => setConversations(res.data))
-      .catch((err) => {
+      .catch(() => {
         error('Failed to load conversation history')
         setConversations([])
       })
