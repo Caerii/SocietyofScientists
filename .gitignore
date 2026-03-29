@@ -72,3 +72,9 @@ htmlcov/
 *.tmp
 *.temp
 coding/
+
+# Package runtime cache (API server)
+society_of_scientists/.cache/
+
+# Windows reserved name accidentally created as a file
+/nul
